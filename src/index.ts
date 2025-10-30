@@ -47,7 +47,7 @@ const feed = new Feed({
     copyright: "Some copyright",
     language: "en",
     description: "Hacker news front page improved",
-    link: "https://lbagnascom.github.io/hn-feed"
+    link: "https://lbagnascom.github.io/hn-feed/feed.xml"
 });
 
 stories
