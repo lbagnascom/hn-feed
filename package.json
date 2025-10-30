@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "generate-feed": "tsx src/index.js"
+    "generate-feed": "tsx src/index.ts"
   },
   "devDependencies": {
     "@types/jsdom": "^27.0.0",

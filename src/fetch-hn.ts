@@ -46,7 +46,12 @@ export const fetchStory = async (id: string): Promise<Story | null> => {
 }
 
 export const fetchStoryUrlContent = async ({ url }: Story): Promise<string | null> => {
-    const result = await fetch(url);
-    const text = await result.text();
-    return text;
+    try {
+        const result = await fetch(url);
+        const text = await result.text();
+        return text;
+    } catch (err) {
+        console.log("Error in fetchStoryUrlContent for url: " + url);
+        return null
+    }
 }
