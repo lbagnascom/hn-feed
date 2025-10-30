@@ -3,6 +3,7 @@ import { Readability } from "@mozilla/readability";
 import { Feed, type Author, type Item } from "feed";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { fetchStory, fetchStoryUrlContent, fetchTopStoriesIds } from "./fetch-hn.ts";
+import DOMPurify from "dompurify";
 
 const storyIds = await fetchTopStoriesIds();
 
@@ -17,7 +18,11 @@ const stories = await Promise.all(storyIds.map(async (id) => {
         return null;
     }
 
-    const jsdomPage = new JSDOM(pageText, { url: story.url });
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+    const cleanPageText = purify.sanitize(pageText);
+
+    const jsdomPage = new JSDOM(cleanPageText, { url: story.url });
     const reader = new Readability(jsdomPage.window.document);
     const article = reader.parse();
 
