@@ -1,1 +1,1 @@
-export const STORIES_TO_FETCH: number = 5;
+export const STORIES_TO_FETCH: number = 15;
