@@ -56,8 +56,8 @@ stories
 
 await writeFile("feed.xml", feed.rss2(), null, (err) => {
     if (err) {
-        console.log("Error");
+        console.log("Error writing feed.xml: " + err);
     }
-    console.log("Todo ok");
+    console.log("File feed.xml created successfully");
 });
 
