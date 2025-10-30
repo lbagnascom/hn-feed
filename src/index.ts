@@ -1,0 +1,63 @@
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
+import { Feed, type Author, type Item } from "feed";
+import { writeFile } from "node:fs";
+import { fetchStory, fetchStoryUrlContent, fetchTopStoriesIds } from "./fetch-hn.ts";
+
+const storyIds = await fetchTopStoriesIds();
+
+const stories = await Promise.all(storyIds.map(async (id) => {
+    const story = await fetchStory(id);
+    if (!story) {
+        return null;
+    }
+
+    const pageText = await fetchStoryUrlContent(story);
+    if (!pageText) {
+        return null;
+    }
+
+    const jsdomPage = new JSDOM(pageText, { url: story.url });
+    const reader = new Readability(jsdomPage.window.document);
+    const article = reader.parse();
+
+    if (!article || !article.content) {
+        return null;
+    }
+
+    const author: Author = {
+        name: article.byline ?? "Uknown author",
+    }
+
+    const item: Item = {
+        date: new Date(story.time ? story.time * 1000 : ""),
+        link: story.url,
+        title: story.title ?? article.title ?? "",
+        content: article.content,
+        description: article.excerpt ?? "",
+        author: [author],
+    };
+
+    return item;
+}));
+
+const feed = new Feed({
+    id: "SomeRandomId",
+    title: "Hacker News: Front Page",
+    copyright: "Some copyright",
+    language: "en",
+    description: "Hacker news front page improved",
+    link: "https://lbagnascom.github.io/hn-feed"
+});
+
+stories
+    .filter((value) => value !== null)
+    .forEach((article) => { feed.addItem(article) });
+
+await writeFile("feed.xml", feed.rss2(), null, (err) => {
+    if (err) {
+        console.log("Error");
+    }
+    console.log("Todo ok");
+});
+

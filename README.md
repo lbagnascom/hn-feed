@@ -1,1 +1,1 @@
-# hn-feed
+# HackerNews RSS Feed
