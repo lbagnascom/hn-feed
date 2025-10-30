@@ -1,7 +1,7 @@
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 import { Feed, type Author, type Item } from "feed";
-import { writeFile } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { fetchStory, fetchStoryUrlContent, fetchTopStoriesIds } from "./fetch-hn.ts";
 
 const storyIds = await fetchTopStoriesIds();
@@ -54,10 +54,14 @@ stories
     .filter((value) => value !== null)
     .forEach((article) => { feed.addItem(article) });
 
-await writeFile("feed.xml", feed.rss2(), null, (err) => {
-    if (err) {
-        console.log("Error writing feed.xml: " + err);
-    }
-    console.log("File feed.xml created successfully");
-});
 
+try {
+    const distDir = "dist";
+    if (!existsSync(distDir)) {
+        mkdirSync(distDir);
+    }
+    writeFileSync(distDir + "/feed.xml", feed.rss2());
+    console.log("File 'dist/feed.xml' created successfully");
+} catch (err) {
+    console.log("Error creating 'dist/feed.xml' : " + err);
+}
