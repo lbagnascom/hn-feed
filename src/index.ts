@@ -1,13 +1,12 @@
-import { JSDOM } from "jsdom";
-import { Readability } from "@mozilla/readability";
-import { Feed, type Author, type Item } from "feed";
+import { Feed, type Item } from "feed";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { fetchStory, fetchStoryUrlContent, fetchTopStoriesIds } from "./fetch-hn.ts";
-import DOMPurify from "dompurify";
+import sanitize from "./sanitize.ts";
+import extractArticle from "./extract-article.ts";
 
 const storyIds = await fetchTopStoriesIds();
 
-const stories = await Promise.all(storyIds.map(async (id) => {
+const stories = await Promise.all(storyIds.map(async (id: string): Promise<Item | null> => {
     const story = await fetchStory(id);
     if (!story) {
         return null;
@@ -18,32 +17,22 @@ const stories = await Promise.all(storyIds.map(async (id) => {
         return null;
     }
 
-    const window = new JSDOM('').window;
-    const purify = DOMPurify(window);
-    const cleanPageText = purify.sanitize(pageText);
-
-    const jsdomPage = new JSDOM(cleanPageText, { url: story.url });
-    const reader = new Readability(jsdomPage.window.document);
-    const article = reader.parse();
-
-    if (!article || !article.content) {
+    const cleanPageText = sanitize(pageText);
+    const article = extractArticle(cleanPageText, story.url);
+    if (!article) {
         return null;
     }
 
-    const author: Author = {
-        name: article.byline ?? "Uknown author",
-    }
+    const cleanContent = sanitize(article.content);
 
-    const item: Item = {
-        date: new Date(story.time ? story.time * 1000 : ""),
+    return {
+        date: new Date(story.time ? story.time * 1000 : Date.now()),
         link: story.url,
-        title: story.title ?? article.title ?? "",
-        content: article.content,
-        description: article.excerpt ?? "",
-        author: [author],
+        title: story.title ?? article.title ?? "Unkown title",
+        content: cleanContent,
+        description: article.excerpt ?? undefined,
+        author: article.byline ? [{ name: article.byline }] : undefined,
     };
-
-    return item;
 }));
 
 const feed = new Feed({
@@ -58,7 +47,6 @@ const feed = new Feed({
 stories
     .filter((value) => value !== null)
     .forEach((article) => { feed.addItem(article) });
-
 
 try {
     const distDir = "dist";

@@ -4,7 +4,8 @@ const BASE_URL: string = "https://hacker-news.firebaseio.com";
 
 const TOPSTORIES: string = "/v0/topstories.json";
 
-const getHnItemUrl = (id: string) => BASE_URL + `/v0/item/${id}.json`;
+const getHnItemUrl = (id: string): string =>
+    BASE_URL + `/v0/item/${id}.json`;
 
 type Story = {
     id: number,
