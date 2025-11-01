@@ -9,7 +9,7 @@ type VeryPartial<T> = Nullable<
 
 type Article = {
     content: string;
-    byline: string;
+    byline: Nullable<string>;
     title: Nullable<string>;
     textContent: Nullable<string>;
     length: Nullable<number>;
@@ -20,9 +20,9 @@ type Article = {
     publishedTime: Nullable<string>;
 };
 
-const parseArticle = (article: VeryPartial<Article>): Article | null => {
-    if (!article || !article.content || !article.byline) {
-        console.log("Failed parsing article " + article);
+const parseArticle = (article: VeryPartial<Article>, url: string): Article | null => {
+    if (!article || !article.content) {
+        console.log(`Failed parsing article with url ${url}`);
         return null;
     }
     return article as Article;
@@ -36,7 +36,7 @@ const extractArticle = (html: string, url: string): Article | null => {
     }
     const reader = new Readability(document);
     const article = reader.parse();
-    return parseArticle(article);
+    return parseArticle(article, url);
 }
 
 export default extractArticle;

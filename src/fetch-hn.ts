@@ -39,7 +39,7 @@ export const fetchStory = async (id: string): Promise<Story | null> => {
     const item = await result.json();
 
     if (item?.type !== "story" || !item?.url) {
-        console.log("Skipped item " + item);
+        console.log(`Skipped item with id ${id} and url ${item.url}`);
         return null;
     }
 
