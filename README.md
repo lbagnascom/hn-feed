@@ -2,8 +2,6 @@
 
 A Node tool that fetches [Hacker News](https://news.ycombinator.com/)' top stories, extracts their readable content, sanitizes it and generates an RSS feed.
 
-The feed is available at [lbagnascom.github.io/hn-feed/feed.xml](https://lbagnascom.github.io/hn-feed/feed.xml) and automatically generated every day using the GitHub workflow in this repo.
-
 ## How it works
 
 - Fetches top stories from [Hacker News' API](https://github.com/HackerNews/API).
