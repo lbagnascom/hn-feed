@@ -12,7 +12,6 @@ const feed = new Feed({
     title: "Hacker News RSS Feed",
     copyright: "Some copyright",
     language: "en",
-    description: "Hacker news front page improved",
     link: feedUrl
 });
 
