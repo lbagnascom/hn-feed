@@ -31,7 +31,7 @@ const parseArticle = (article: VeryPartial<Article>, url: string): Article | nul
 const extractArticle = (html: string, url: string): Article | null => {
     const { document } = new JSDOM(html, { url }).window;
     if (!isProbablyReaderable(document)) {
-        console.log(`Skipped parsing article with url ${url} for not being probablyReaderdable`);
+        console.log(`Skipped parsing article with url ${url} for not being probablyReaderable`);
         return null;
     }
     const reader = new Readability(document);
