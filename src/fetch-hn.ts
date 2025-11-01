@@ -33,13 +33,13 @@ export const fetchTopStoriesIds = async (): Promise<string[]> => {
     return topStoriesIds.splice(0, STORIES_TO_FETCH);
 }
 
-
 export const fetchStory = async (id: string): Promise<Story | null> => {
     const itemId = getHnItemUrl(id);
     const result = await fetch(itemId);
     const item = await result.json();
 
     if (item?.type !== "story" || !item?.url) {
+        console.log("Skipped item " + item);
         return null;
     }
 
@@ -52,7 +52,7 @@ export const fetchStoryUrlContent = async ({ url }: Story): Promise<string | nul
         const text = await result.text();
         return text;
     } catch (err) {
-        console.log("Error in fetchStoryUrlContent for url: " + url);
-        return null
+        console.log(`fetchStoryUrlContent failed for url ${url} with error ${err}`);
+        return null;
     }
 }

@@ -22,6 +22,7 @@ type Article = {
 
 const parseArticle = (article: VeryPartial<Article>): Article | null => {
     if (!article || !article.content || !article.byline) {
+        console.log("Failed parsing article " + article);
         return null;
     }
     return article as Article;
@@ -30,6 +31,7 @@ const parseArticle = (article: VeryPartial<Article>): Article | null => {
 const extractArticle = (html: string, url: string): Article | null => {
     const { document } = new JSDOM(html, { url }).window;
     if (!isProbablyReaderable(document)) {
+        console.log(`Skipped parsing article with url ${url} for not being probablyReaderdable`);
         return null;
     }
     const reader = new Readability(document);

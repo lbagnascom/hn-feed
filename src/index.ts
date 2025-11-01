@@ -26,6 +26,7 @@ const stories = await Promise.all(storyIds.map(async (id: string): Promise<Item 
     const cleanContent = sanitize(article.content);
 
     return {
+        id: story.id.toString(),
         date: new Date(story.time ? story.time * 1000 : Date.now()),
         link: story.url,
         title: story.title ?? article.title ?? "Unkown title",
@@ -35,9 +36,10 @@ const stories = await Promise.all(storyIds.map(async (id: string): Promise<Item 
     };
 }));
 
+
 const feed = new Feed({
     id: "SomeRandomId",
-    title: "Hacker News: Front Page",
+    title: "Hacker News RSS Feed",
     copyright: "Some copyright",
     language: "en",
     description: "Hacker news front page improved",
@@ -48,13 +50,15 @@ stories
     .filter((value) => value !== null)
     .forEach((article) => { feed.addItem(article) });
 
+const distDir = "dist";
+const feedPath = distDir + "/feed.xml";
+
 try {
-    const distDir = "dist";
     if (!existsSync(distDir)) {
         mkdirSync(distDir);
     }
-    writeFileSync(distDir + "/feed.xml", feed.rss2());
-    console.log("File 'dist/feed.xml' created successfully");
+    writeFileSync(feedPath, feed.rss2());
+    console.log(`File '${feedPath}' created successfully`);
 } catch (err) {
-    console.log("Error creating 'dist/feed.xml' : " + err);
+    console.log(`Error creating '${feedPath}' : ${err}`);
 }
