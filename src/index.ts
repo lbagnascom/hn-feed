@@ -6,13 +6,14 @@ import extractArticle from "./extract-article.ts";
 
 const storyIds = await fetchTopStoriesIds();
 
+const feedUrl = "https://lbagnascom.github.io/hn-feed/feed.xml";
 const feed = new Feed({
-    id: "SomeRandomId",
+    id: feedUrl,
     title: "Hacker News RSS Feed",
     copyright: "Some copyright",
     language: "en",
     description: "Hacker news front page improved",
-    link: "https://lbagnascom.github.io/hn-feed/feed.xml"
+    link: feedUrl
 });
 
 await Promise.all(
